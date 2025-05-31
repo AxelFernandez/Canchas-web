@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Venue Owner Dashboard{% endblock %}
+
+{% block content %}
+  <h2>Venue Owner Dashboard</h2>
+  <a href="{% url 'venues:venue-create' %}">Add New Venue</a>
+  {% if venues %}
+    <ul>
+      {% for venue in venues %}
+        <li>
+          {{ venue.name }} - {{ venue.address }}
+          <a href="{% url 'venues:venue-update' venue.pk %}">Edit</a>
+          <a href="{% url 'venues:venue-delete' venue.pk %}">Delete</a>
+          <a href="{% url 'courts:court-list' venue_pk=venue.pk %}" style='margin-left: 10px;'>Manage Courts</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven't added any venues yet.</p>
+  {% endif %}
+{% endblock %}

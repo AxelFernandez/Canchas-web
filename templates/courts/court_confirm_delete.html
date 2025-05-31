@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete Court{% endblock %}
+
+{% block content %}
+  <h2>Confirm Delete: {{ court.name }} at {{ court.venue.name }}</h2>
+  <p>Are you sure you want to delete this court? All associated reservations will also be affected (or should be handled).</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirm Delete</button>
+    <a href="{% url 'courts:court-detail' court.pk %}">Cancel</a>
+  </form>
+{% endblock %}

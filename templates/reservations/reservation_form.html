@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Reservation{% endblock %}
+
+{% block content %}
+  <h2>Confirm Your Reservation</h2>
+  <p><strong>Court:</strong> {{ court.name }} at {{ court.venue.name }}</p>
+  <p><strong>Date & Time:</strong> {{ start_time_display }}</p> {# This comes from get_context_data #}
+  <p><strong>Duration:</strong> {{ court.turn_duration_setting.duration_minutes }} minutes</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }} {# This will render notes, and hidden court_id, start_time #}
+    <button type="submit">Confirm Booking</button>
+  </form>
+  {# Construct the cancel URL query string for the date #}
+  {% if form.initial.start_time %}
+    <p><a href="{% url 'reservations:court-availability' court_pk=court.pk %}?date={{ form.initial.start_time|date:'Y-m-d' }}">Cancel and Go Back to Availability</a></p>
+  {% else %}
+    {# Fallback if start_time not in initial, though it should be #}
+    <p><a href="{% url 'reservations:court-availability' court_pk=court.pk %}">Cancel and Go Back to Availability</a></p>
+  {% endif %}
+{% endblock %}

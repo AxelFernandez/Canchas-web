@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Edit Court{% else %}Add Court to {{ venue.name }}{% endif %}{% endblock %}
+
+{% block content %}
+  <h2>{% if object %}Edit {{ object.name }}{% else %}Add New Court to {{ venue.name }}{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if object %}Save Changes{% else %}Add Court{% endif %}</button>
+  </form>
+  <p><a href="{% if object %}{% url 'courts:court-detail' object.pk %}{% else %}{% url 'courts:court-list' venue_pk=venue.pk %}{% endif %}">Cancel</a></p>
+{% endblock %}

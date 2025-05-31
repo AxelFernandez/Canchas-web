@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ venue.name }} - Venue Details{% endblock %}
+
+{% block content %}
+  <h2>{{ venue.name }}</h2>
+  <p><strong>Address:</strong> {{ venue.address }}</p>
+  <p><strong>Phone:</strong> {{ venue.phone_number|default:"N/A" }}</p>
+  <p><strong>Description:</strong> {{ venue.description|default:"N/A" }}</p>
+
+  <h3>Courts at this Venue:</h3>
+  {% if courts %}
+    <ul>
+      {% for court in courts %}
+        <li>
+          <strong>{{ court.name }}</strong> ({{ court.court_type.name }})
+          - Turn Duration: {{ court.turn_duration_setting.duration_minutes }} minutes
+          {# Link to view court details and available slots will go here #}
+          <a href="{% url 'reservations:court-availability' court_pk=court.pk %}" style="margin-left: 10px;">View Availability & Book</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>This venue has no active courts listed.</p>
+  {% endif %}
+  <p><a href="{% url 'venues:venue-public-list' %}">Back to all venues</a></p>
+{% endblock %}

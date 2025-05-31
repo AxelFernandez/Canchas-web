@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Venues{% endblock %}
+
+{% block content %}
+  <h2>Available Venues</h2>
+  {% if venues %}
+    <ul>
+      {% for venue in venues %}
+        <li>
+          <h3><a href="{% url 'venues:venue-public-detail' venue.pk %}">{{ venue.name }}</a></h3>
+          <p>{{ venue.address }}</p>
+          <p>{{ venue.description|truncatewords:30 }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No venues are currently available.</p>
+  {% endif %}
+{% endblock %}

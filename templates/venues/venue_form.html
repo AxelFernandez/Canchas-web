@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Edit Venue{% else %}Add Venue{% endif %}{% endblock %}
+
+{% block content %}
+  <h2>{% if object %}Edit {{ object.name }}{% else %}Add New Venue{% endif %}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if object %}Save Changes{% else %}Add Venue{% endif %}</button>
+  </form>
+  <p><a href="{% url 'venues:venue-list' %}">Cancel</a></p>
+{% endblock %}

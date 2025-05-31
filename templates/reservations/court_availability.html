@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load tz %} {# For timezone conversions in template if needed, e.g. {{ value|timezone:"Europe/Paris" }} #}
+
+{% block title %}Availability for {{ court.name }}{% endblock %}
+
+{% block content %}
+  <h2>Availability for {{ court.name }} at {{ court.venue.name }}</h2>
+  <p>Turn Duration: {{ court.turn_duration_setting.duration_minutes }} minutes</p>
+  <p><a href="{% url 'venues:venue-public-detail' court.venue.pk %}">Back to {{ court.venue.name }}</a></p>
+
+  <div>
+    <a href="?date={{ previous_date.isoformat }}">Previous Day ({{ previous_date|date:"M d" }})</a> |
+    <strong>Selected Date: {{ selected_date|date:"l, F d, Y" }}</strong> |
+    <a href="?date={{ next_date.isoformat }}">Next Day ({{ next_date|date:"M d" }})</a>
+  </div>
+
+  <h3>Available Slots for {{ selected_date|date:"F d, Y" }}:</h3>
+  {% if time_slots %}
+    <ul style="list-style-type: none; padding: 0;">
+      {% for slot in time_slots %}
+        <li style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; {% if slot.is_booked or slot.is_past %}background-color: #f0f0f0; color: #aaa;{% endif %}">
+          {# Display time in local timezone - assuming TIME_ZONE is correctly set in Django settings #}
+          {{ slot.start_time_aware|date:"H:i" }} - {{ slot.end_time_aware|date:"H:i" }}
+
+          {% if slot.is_booked %}
+            (Booked)
+          {% elif slot.is_past %}
+            (Past)
+          {% else %}
+            {% if user.is_authenticated %}
+              <a href="{% url 'reservations:reservation-create' court_pk=court.pk %}?start_time={{ slot.start_time_iso }}" style="margin-left: 20px; padding: 5px 10px; background-color: green; color: white; text-decoration: none;">Book Now</a>
+            {% else %}
+              {# Ensure next URL is properly encoded for query parameters #}
+              {% url 'login' as login_url %}
+              {# Constructing the next URL carefully #}
+              {% querystring request.GET court_pk=court.pk start_time=slot.start_time_iso as current_query_params %}
+              <a href="{{ login_url }}?next={% url 'reservations:reservation-create' court_pk=court.pk %}{{ current_query_params|urlencode }}" style="margin-left: 20px;">Login to Book</a>
+            {% endif %}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No time slots available for this day (check operating hours or try another date).</p>
+  {% endif %}
+{% endblock %}

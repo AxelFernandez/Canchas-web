@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Court Details: {{ court.name }}{% endblock %}
+
+{% block content %}
+  <h2>{{ court.name }} at {{ court.venue.name }}</h2>
+  <p><strong>Type:</strong> {{ court.court_type.name }}</p>
+  <p><strong>Description:</strong> {{ court.description|default:"N/A" }}</p>
+  <p><strong>Status:</strong> {% if court.is_active %}Active{% else %}Inactive{% endif %}</p>
+
+  <hr>
+  <h3>Turn Duration</h3>
+  <form method="post" action="{% url 'courts:turn-duration-update' court_pk=court.pk %}">
+      {% csrf_token %}
+      {{ turn_duration_form.as_p }}
+      <button type="submit">Update Duration</button>
+  </form>
+  <p>Current duration: {{ court.turn_duration_setting.duration_minutes }} minutes.</p>
+
+  <hr>
+  <h3>Upcoming Reservations</h3>
+  {% if upcoming_reservations %}
+    <ul>
+        {% for reservation in upcoming_reservations %}
+            <li>{{ reservation.start_time|date:"Y-m-d H:i" }} - {{ reservation.end_time|date:"H:i" }} (User: {{ reservation.user.username }})</li>
+        {% endfor %}
+    </ul>
+  {% else %}
+    <p>No upcoming reservations for this court.</p>
+  {% endif %}
+  <hr>
+  <p>
+    <a href="{% url 'courts:court-update' court.pk %}">Edit Court Information</a> |
+    <a href="{% url 'courts:court-list' venue_pk=court.venue.pk %}">Back to Courts List for {{ court.venue.name }}</a>
+  </p>
+{% endblock %}

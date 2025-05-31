@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Courts for {{ venue.name }}{% endblock %}
+
+{% block content %}
+  <h2>Courts at {{ venue.name }}</h2>
+  <p><a href="{% url 'venues:venue-list' %}">Back to My Venues</a></p>
+  <p><a href="{% url 'courts:court-create' venue_pk=venue.pk %}">Add New Court to {{ venue.name }}</a></p>
+  {% if courts %}
+    <ul>
+      {% for court in courts %}
+        <li>
+          {{ court.name }} ({{ court.court_type.name }}) -
+          Duration: {{ court.turn_duration_setting.duration_minutes|default:"Not set" }} mins
+          <a href="{% url 'courts:court-detail' court.pk %}">View/Edit Details</a>
+          <a href="{% url 'courts:court-update' court.pk %}">Edit Court Info</a>
+          <a href="{% url 'courts:court-delete' court.pk %}">Delete Court</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>This venue has no courts yet.</p>
+  {% endif %}
+{% endblock %}
